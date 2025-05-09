@@ -15,7 +15,8 @@ data Tree a = Empty | Node a (Tree a) (Tree a)
 -- because the tree might be empty (i.e. just a Empty)
 
 valAtRoot :: Tree a -> Maybe a
-valAtRoot t = todo
+valAtRoot Empty = Nothing
+valAtRoot (Node root left right) = Just root
 
 ------------------------------------------------------------------------------
 -- Ex 2: compute the size of a tree, that is, the number of Node
@@ -26,7 +27,8 @@ valAtRoot t = todo
 --   treeSize (Node 3 (Node 7 Empty Empty) (Node 1 Empty Empty))  ==>  3
 
 treeSize :: Tree a -> Int
-treeSize t = todo
+treeSize Empty = 0
+treeSize (Node root left right) = 1 + treeSize left + treeSize right
 
 ------------------------------------------------------------------------------
 -- Ex 3: get the largest value in a tree of positive Ints. The
@@ -37,7 +39,8 @@ treeSize t = todo
 --   treeMax (Node 3 (Node 5 Empty Empty) (Node 4 Empty Empty))  ==>  5
 
 treeMax :: Tree Int -> Int
-treeMax = todo
+treeMax Empty = 0
+treeMax (Node root left right) = maximum [root, treeMax left, treeMax right]
 
 ------------------------------------------------------------------------------
 -- Ex 4: implement a function that checks if all tree values satisfy a
