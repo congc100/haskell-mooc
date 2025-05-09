@@ -133,7 +133,12 @@ renderListExample = renderList justADot (9,11) (9,11)
 --      ["000000","000000","000000"]]
 
 dotAndLine :: Picture
-dotAndLine = todo
+dotAndLine = Picture f
+  where
+    f (Coord 3 4) = white
+    f (Coord _ 8) = pink
+    f _           = black
+
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -166,10 +171,12 @@ dotAndLine = todo
 --          ["7f0000","7f0000","7f0000"]]
 
 blendColor :: Color -> Color -> Color
-blendColor = todo
+blendColor (Color r1 g1 b1) (Color r2 g2 b2) =
+  Color (div (r1+r2) 2) (div (g1+g2) 2) (div (b1+b2) 2)
 
 combine :: (Color -> Color -> Color) -> Picture -> Picture -> Picture
-combine = todo
+combine fc (Picture f1) (Picture f2) = Picture f
+  where f (Coord x y) = fc (f1 (Coord x y)) (f2 (Coord x y))
 
 ------------------------------------------------------------------------------
 
@@ -240,7 +247,8 @@ exampleCircle = fill red (circle 80 100 200)
 --        ["000000","000000","000000","000000","000000","000000"]]
 
 rectangle :: Int -> Int -> Int -> Int -> Shape
-rectangle x0 y0 w h = todo
+rectangle x0 y0 w h = Shape f
+  where f (Coord x y) = x >= x0 && y >= y0 && (x-x0) < w && (y-y0) < h
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -256,10 +264,12 @@ rectangle x0 y0 w h = todo
 -- shape.
 
 union :: Shape -> Shape -> Shape
-union = todo
+union (Shape f1) (Shape f2) = Shape f
+  where f coord = f1 coord || f2 coord
 
 cut :: Shape -> Shape -> Shape
-cut = todo
+cut (Shape f1) (Shape f2) = Shape f
+  where f coord = f1 coord && not (f2 coord)
 ------------------------------------------------------------------------------
 
 -- Here's a snowman, built using union from circles and rectangles.
@@ -287,7 +297,9 @@ exampleSnowman = fill white snowman
 --        ["000000","000000","000000"]]
 
 paintSolid :: Color -> Shape -> Picture -> Picture
-paintSolid color shape base = todo
+paintSolid color (Shape shape) (Picture base) = Picture f
+  where f coord | shape coord = color
+                | otherwise   = base coord
 ------------------------------------------------------------------------------
 
 allWhite :: Picture
